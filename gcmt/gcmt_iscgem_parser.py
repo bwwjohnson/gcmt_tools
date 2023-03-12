@@ -59,7 +59,7 @@ class ISCGEMCatalogue(object):
         Writes the ISC-GEM catalogue into a GCMT catalogue format
         """
         for iloc in range(0, self.get_number_events()):
-            print iloc
+            print(iloc)
             gcmt = GCMTEvent()
             gcmt.identifier = self.data['eventID'][iloc]
             gcmt.magnitude = self.data['magnitude'][iloc]

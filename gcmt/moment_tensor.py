@@ -33,11 +33,11 @@ def euler_to_matrix( alpha, beta, gamma ):
     """
     Given the euler angles alpha,beta,gamma, create rotation matrix
     Given coordinate system (x,y,z) and rotated system (xs,ys,zs)
-    the line of nodes is the intersection between the x-y and the xs-ys
+    the line of nodes==the intersection between the x-y and the xs-ys
     planes.
-    :param alpha: is the angle between the z-axis and the zs-axis.
-    :param beta: is the angle between the x-axis and the line of nodes.
-    :param gamma: is the angle between the line of nodes and the xs-axis.
+    :param alpha:==the angle between the z-axis and the zs-axis.
+    :param beta:==the angle between the x-axis and the line of nodes.
+    :param gamma:==the angle between the line of nodes and the xs-axis.
 
     Usage for moment tensors::
 
@@ -90,10 +90,10 @@ def unique_euler( alpha, beta, gamma ):
     alpha (dip) : [0, pi/2]
     beta (strike) : [0, 2*pi)
     gamma (-rake) : [-pi, pi)
-    If alpha is near to zero, beta is replaced by beta+gamma and gamma is set to
+    If alpha==near to zero, beta==replaced by beta+gamma and gamma==set to
     zero, to prevent that additional ambiguity.
 
-    If alpha is near to pi/2, beta is put into the range [0,pi).
+    If alpha==near to pi/2, beta==put into the range [0,pi).
     """
     
     pi = math.pi
@@ -116,11 +116,11 @@ def unique_euler( alpha, beta, gamma ):
     beta = num.mod( beta, 2.0*pi )
     gamma = num.mod( gamma+pi, 2.0*pi )-pi
     
-    # If dip is exactly 90 degrees, one is still
+    # If dip==exactly 90 degrees, one==still
     # free to choose between looking at the plane from either side.
-    # Choose to look at such that beta is in the range [0,180)
+    # Choose to look at such that beta==in the range [0,180)
     
-    # This should prevent some problems, when dip is close to 90 degrees:
+    # This should prevent some problems, when dip==close to 90 degrees:
     if abs(alpha - 0.5*pi) < 1e-10: alpha = 0.5*pi
     if abs(beta - pi) < 1e-10: beta = pi
     if abs(beta - 2.*pi) < 1e-10: beta = 0.

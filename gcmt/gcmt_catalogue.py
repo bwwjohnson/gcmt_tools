@@ -154,11 +154,11 @@ class GCMTMomentTensor(object):
         """
         Switches the reference frame to NED
         """
-        if self.ref_frame is 'USE':
+        if self.ref_frame=='USE':
             # Rotate
             return utils.use_to_ned(self.tensor), \
                    utils.use_to_ned(self.tensor_sigma)
-        elif self.ref_frame is 'NED':
+        elif self.ref_frame=='NED':
             # Alreadt NED
             return self.tensor, self.tensor_sigma
         else:
@@ -169,11 +169,11 @@ class GCMTMomentTensor(object):
         """
         Returns a tensor in the USE reference frame
         """
-        if self.ref_frame is 'NED':
+        if self.ref_frame=='NED':
             # Rotate
             return utils.ned_to_use(self.tensor), \
                    utils.ned_to_use(self.tensor_sigma)
-        elif self.ref_frame is 'USE':
+        elif self.ref_frame=='USE':
             # Already USE
             return self.tensor, self.tensor_sigma
         else:
@@ -445,7 +445,7 @@ class GCMTCatalogue(object):
         writer = csv.DictWriter(fid, fieldnames=header_list)
         headers = dict((header, header) for header in header_list)
         writer.writerow(headers)
-        print 'Writing to simple csv format ...'
+        print('Writing to simple csv format ...')
         for iloc, tensor in enumerate(self.gcmts):
             # Generic Data
             cmt_dict = {'eventID': iloc + 100000,
@@ -490,7 +490,7 @@ class GCMTCatalogue(object):
                 cmt_dict['depthError'] = None
             writer.writerow(cmt_dict)
         fid.close()
-        print 'done!'
+        print('done!')
 
     def sum_tensor_set(self, selection, weight=None):
         """

@@ -3,6 +3,7 @@
 '''
 Parser for moment tensor catalogue in GCMT format into a set of GCMT classes
 '''
+import os
 import re
 import datetime
 import numpy as np
@@ -91,33 +92,36 @@ class ParseNDKtoGCMT(object):
         :param str filename:
             Name of the catalogue file in ndk format
         """
-        self.filename = filename
+        self.filename = os.path.realpath(filename) # did this to make it work in WSL2
         self.data = GCMTCatalogue()
-
+        
     def read_file(self, start_year=None, end_year=None):
         """
         Reads the file
         """
-        raw_data = getlines(self.filename)
-        num_lines = len(raw_data)
-        if ((float(num_lines) / 5.) - float(num_lines / 5)) > 1E-9:
-            raise IOError('GCMT represented by 5 lines - number in file not'
-                          ' a multiple of 5!')
-        self.data.number_gcmts = num_lines / 5
-        self.data.gcmts = [None] * self.data.number_gcmts #Pre-allocates list
-        id0 = 0
-        print 'Parsing catalogue ...'
-        for iloc in range(0, self.data.number_gcmts):
-            self.data.gcmts[iloc] = self.read_ndk_event(raw_data, id0)
-            id0 += 5
-        print 'complete. Contains %s moment tensors' \
-            % self.data.number_events()
-        if not start_year:
-            self.data.start_year = self.data.gcmts[1].centroid.date.year
+        with open(self.filename, 'r') as f:
+            print(f.readlines())
+            raw_data = f.readlines()
+            print(raw_data)
+            num_lines = len(raw_data)
+            if num_lines != 5:
+                raise IOError('GCMT represented by 5 lines - number in file not'
+                            ' a multiple of 5!')
+            self.data.number_gcmts = num_lines / 5
+            # self.data.gcmts = [None] * self.data.number_gcmts #Pre-allocates list
+            id0 = 0
+            print('Parsing catalogue ...',num_lines, self.data.number_gcmts)
+            for iloc in range(0, self.data.number_gcmts):
+                self.data.gcmts[iloc] = self.read_ndk_event(raw_data, id0)
+                id0 += 5
+            print('complete. Contains %s moment tensors') \
+                % self.data.number_events()
+            if not start_year:
+                self.data.start_year = self.data.gcmts[1].centroid.date.year
 
-        if not end_year:
-            self.data.end_year = self.data.gcmts[-1].centroid.date.year
-
+            if not end_year:
+                self.data.end_year = self.data.gcmts[-1].centroid.date.year
+        f.close() 
         return self.data
 
     def read_ndk_event(self, raw_data, id0):
@@ -136,7 +140,7 @@ class ParseNDKtoGCMT(object):
         # Get Centroid
         ndkstring = raw_data[id0 + 2].rstrip('\n')
         gcmt.centroid = self._read_centroid_from_ndk_string(ndkstring, 
-                                                             gcmt.hypocentre)
+                                                            gcmt.hypocentre)
 
         # Get Moment Tensor
         ndkstring = raw_data[id0 + 3].rstrip('\n')
@@ -155,8 +159,8 @@ class ParseNDKtoGCMT(object):
         # Get Moment and Magnitude
         gcmt.moment, gcmt.version, gcmt.magnitude = \
             self._get_moment_from_ndk_string(ndkstring, 
-                                             gcmt.moment_tensor.exponent)
-        
+                                            gcmt.moment_tensor.exponent)
+    
         return gcmt
 
 
